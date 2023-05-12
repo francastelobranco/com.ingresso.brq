@@ -11,4 +11,5 @@ public interface UsuarioGateway {
     UsuarioDomain detalharUsuario(String id);
     UsuarioDomain atualizarUsuario(UsuarioDomain usuarioDomain);
     void deletarUsuario(String id);
+    boolean verificaCpfExiste(String cpf);
 }

@@ -1,9 +1,15 @@
 package com.brqingresso.usuario.entrypoint.controller;
 
+import com.brqingresso.usuario.entrypoint.mapper.request.RecuperarSenhaEntryPointMapperRequest;
+import com.brqingresso.usuario.entrypoint.mapper.request.SenhaEntryPointMapperRequest;
 import com.brqingresso.usuario.entrypoint.mapper.request.UsuarioEntryPointMapperRequest;
 import com.brqingresso.usuario.entrypoint.mapper.response.UsuarioEntryPointMapperResponse;
+import com.brqingresso.usuario.entrypoint.model.request.RecuperarSenhaModelRequest;
+import com.brqingresso.usuario.entrypoint.model.request.SenhaModelRequest;
 import com.brqingresso.usuario.entrypoint.model.request.UsuarioModelRequest;
 import com.brqingresso.usuario.entrypoint.model.response.UsuarioModelResponse;
+import com.brqingresso.usuario.usecase.domain.RecuperarSenhaDomain;
+import com.brqingresso.usuario.usecase.domain.SenhaDomain;
 import com.brqingresso.usuario.usecase.domain.UsuarioDomain;
 import com.brqingresso.usuario.usecase.service.UsuarioUseCase;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -13,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
 
@@ -24,7 +31,7 @@ public class UsuarioController {
     UsuarioUseCase usuarioUseCase;
 
     @PostMapping
-    public ResponseEntity<UsuarioModelResponse> cadastrarUsuario(@RequestBody UsuarioModelRequest usuarioModelRequest){
+    public ResponseEntity<UsuarioModelResponse> cadastrarUsuario(@RequestBody @Valid UsuarioModelRequest usuarioModelRequest){
         UsuarioDomain usuarioDomain = UsuarioEntryPointMapperRequest.convertToDomain(usuarioModelRequest);
         usuarioDomain = usuarioUseCase.cadastrarUsuario(usuarioDomain);
         UsuarioModelResponse usuarioModel = UsuarioEntryPointMapperResponse.convertToModel(usuarioDomain);
@@ -65,4 +72,25 @@ public class UsuarioController {
         return ResponseEntity.status(HttpStatus.OK).body(usuarioAtualizadoModel);
     }
 
+    @PutMapping("/{idUsuario}/senhas")
+    public ResponseEntity alterarSenha(@PathVariable(value = "idUsuario") String idUsuario,
+                                       @RequestBody SenhaModelRequest senha){
+
+        SenhaDomain senhaDomain = SenhaEntryPointMapperRequest.convertToDomain(senha);
+        usuarioUseCase.alterarSenha(idUsuario, senhaDomain);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    @GetMapping("/{idUsuario}/senhas")
+    public ResponseEntity<String> gerarCodigoAlteracaoSenha(@PathVariable(value = "idUsuario") String idUsuario){
+       var codigo = usuarioUseCase.gerarCodigoAlteracaoSenha(idUsuario);
+       return ResponseEntity.status(HttpStatus.OK).body(codigo);
+    }
+
+    @PostMapping("/{idUsuario}/senhas")
+    public ResponseEntity recuperarSenha(@PathVariable(value = "idUsuario") String idUsuario, @RequestBody RecuperarSenhaModelRequest senhaModelRequest){
+        RecuperarSenhaDomain senha = RecuperarSenhaEntryPointMapperRequest.convertToDomain(senhaModelRequest);
+        usuarioUseCase.recuperarSenha(idUsuario, senha);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
 }

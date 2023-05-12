@@ -1,7 +1,9 @@
 package com.brqingresso.usuario.entrypoint.model.response;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Builder
 @Getter

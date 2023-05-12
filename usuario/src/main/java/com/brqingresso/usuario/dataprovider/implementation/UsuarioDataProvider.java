@@ -6,6 +6,7 @@ import com.brqingresso.usuario.dataprovider.mapper.response.UsuarioResponseMappe
 import com.brqingresso.usuario.dataprovider.repository.UsuarioRepository;
 import com.brqingresso.usuario.usecase.domain.UsuarioDomain;
 import com.brqingresso.usuario.usecase.gateway.UsuarioGateway;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -36,9 +37,9 @@ public class UsuarioDataProvider implements UsuarioGateway {
 
     @Override
     public UsuarioDomain detalharUsuario(String id) {
-        Optional<UsuarioEntity> usuarioEntity = repository.findById(id);
-        UsuarioDomain usuarioDomain = UsuarioResponseMapperProvider.convertToDomain(usuarioEntity.get());
-        return usuarioDomain;
+       UsuarioEntity usuarioEntity = repository.findById(id).orElseThrow(() -> new RuntimeException(String.format("Usuário com ID %s não cadastrado", id)));
+       UsuarioDomain usuarioDomain = UsuarioResponseMapperProvider.convertToDomain(usuarioEntity);
+       return usuarioDomain;
     }
 
     @Override
@@ -52,7 +53,14 @@ public class UsuarioDataProvider implements UsuarioGateway {
 
     @Override
     public void deletarUsuario(String id) {
-        UsuarioEntity usuarioEntity = repository.findById(id).orElseThrow(() -> new RuntimeException(String.format("Não existe usuário com id: s%", id )));
+        UsuarioEntity usuarioEntity = repository.findById(id).orElseThrow(() -> new RuntimeException(String.format("Não existe usuário com id: %s", id )));
         repository.delete(usuarioEntity);
     }
+
+    @Override
+    public boolean verificaCpfExiste(String cpf) {
+        return  repository.existsByCpf(cpf);
+    }
+
+
 }

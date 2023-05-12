@@ -1,5 +1,8 @@
 package com.brqingresso.usuario.usecase.service;
 
+import com.brqingresso.usuario.entrypoint.model.request.SenhaModelRequest;
+import com.brqingresso.usuario.usecase.domain.RecuperarSenhaDomain;
+import com.brqingresso.usuario.usecase.domain.SenhaDomain;
 import com.brqingresso.usuario.usecase.domain.UsuarioDomain;
 
 import java.util.List;
@@ -12,6 +15,7 @@ public interface UsuarioUseCase {
     UsuarioDomain detalharUsuario(String id);
     UsuarioDomain atualizarUsuario(String idUsuario, UsuarioDomain usuarioRequest);
     void deletarUsuario(String id);
-    //UsuarioDomain merge(Map<String, Object> camposOrigem, UsuarioDomain usuarioDetalhado);
-//    UsuarioDomain mergeToDomain(String idUsuario, Map<String, Object> campos);
+    void alterarSenha(String idUsuario, SenhaDomain senha);
+    String gerarCodigoAlteracaoSenha(String idUsuario);
+    void recuperarSenha(String idUsuario, RecuperarSenhaDomain recuperarSenha);
 }

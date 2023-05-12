@@ -1,15 +1,15 @@
 package com.brqingresso.usuario.usecase.service;
 
+import com.brqingresso.usuario.usecase.domain.RecuperarSenhaDomain;
+import com.brqingresso.usuario.usecase.domain.SenhaDomain;
 import com.brqingresso.usuario.usecase.domain.UsuarioDomain;
 import com.brqingresso.usuario.usecase.gateway.UsuarioGateway;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -21,6 +21,8 @@ public class UsuarioServiceImpl implements UsuarioUseCase{
 
     @Override
     public UsuarioDomain cadastrarUsuario(UsuarioDomain usuarioDomain) {
+        validaCpfEmUso(usuarioDomain.getCpf());
+
         usuarioDomain.setId(UUID.randomUUID().toString());
 
         if(usuarioDomain.getDataNascimento().isAfter(LocalDate.now()))
@@ -38,6 +40,7 @@ public class UsuarioServiceImpl implements UsuarioUseCase{
 
     @Override
     public UsuarioDomain detalharUsuario(String id) {
+        //todo: validar
         return usuarioGateway.detalharUsuario(id);
     }
 
@@ -106,20 +109,52 @@ public class UsuarioServiceImpl implements UsuarioUseCase{
         usuarioGateway.deletarUsuario(id);
     }
 
-//    @Override
-//    public UsuarioDomain mergeToDomain(String idUsuario, Map<String, Object> campos) {
-//        UsuarioDomain usuarioDetalhado = detalharUsuario(idUsuario);
-//        usuarioDetalhado = merge(campos, usuarioDetalhado);
-//        usuarioDetalhado = UsuarioEntryPointMapperRequest.convertToDomainUpdate(idUsuario, usuarioDetalhado);
+    @Override
+    public void alterarSenha(String idUsuario, SenhaDomain senha) {
+        var usuario = detalharUsuario(idUsuario);
+        if (!usuario.getSenha().equals(senha.getSenhaAtual())){
+            throw new RuntimeException("A senha atual está incorreta");
+        }
+        usuario.setSenha(senha.getNovaSenha());
+        usuarioGateway.atualizarUsuario(usuario);
+    }
+
+    @Override
+    public String gerarCodigoAlteracaoSenha(String idUsuario) {
+        var usuario = detalharUsuario(idUsuario);
+        String codigo = UUID.randomUUID().toString();
+        return codigo;
+    }
+
+    @Override
+    public void recuperarSenha(String idUsuario, RecuperarSenhaDomain recuperarSenha) {
+        var usuario = detalharUsuario(idUsuario);
+
+        try {
+            UUID.fromString(recuperarSenha.getCodigoSeguranca());
+            usuario.setSenha(recuperarSenha.getNovaSenha());
+
+            usuarioGateway.atualizarUsuario(usuario);
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException();
+        }
+    }
+
+    private void validaCpfEmUso(String cpf) {
+        boolean validaCpf = usuarioGateway.verificaCpfExiste(cpf);
+
+        if (validaCpf) {
+            throw new RuntimeException(String.format("O CPF %s já está cadastrado", cpf));
+        }
+    }
+
+
+//    private UsuarioDomain merge(Map<String, Object> camposOrigem, UsuarioDomain usuarioDetalhado){
+//
+//        ObjectMapper objectMapper = new ObjectMapper();
+//        UsuarioDomain usuarioRequestUpdateOrigem = objectMapper.convertValue(camposOrigem, UsuarioDomain.class);
+//
+//
 //        return usuarioDetalhado;
 //    }
-
-    private UsuarioDomain merge(Map<String, Object> camposOrigem, UsuarioDomain usuarioDetalhado){
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        UsuarioDomain usuarioRequestUpdateOrigem = objectMapper.convertValue(camposOrigem, UsuarioDomain.class);
-
-
-        return usuarioDetalhado;
-    }
 }
