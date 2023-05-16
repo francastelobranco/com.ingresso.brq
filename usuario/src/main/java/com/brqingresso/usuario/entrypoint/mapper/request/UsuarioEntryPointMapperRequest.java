@@ -36,4 +36,5 @@ public class UsuarioEntryPointMapperRequest {
 
         return usuario;
     }
+
 }

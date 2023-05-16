@@ -22,7 +22,7 @@ public class UsuarioServiceImpl implements UsuarioUseCase{
     @Override
     public UsuarioDomain cadastrarUsuario(UsuarioDomain usuarioDomain) {
         validaCpfEmUso(usuarioDomain.getCpf());
-
+//        validarPais(usuarioDomain.getEndereco().getPais());
         usuarioDomain.setId(UUID.randomUUID().toString());
 
         if(usuarioDomain.getDataNascimento().isAfter(LocalDate.now()))
@@ -47,6 +47,7 @@ public class UsuarioServiceImpl implements UsuarioUseCase{
     @Override
     public UsuarioDomain atualizarUsuario(String id, UsuarioDomain usuarioRequest) {
         UsuarioDomain usuarioExistente = detalharUsuario(id);
+
 
         if(StringUtils.isNotBlank(usuarioRequest.getNomeCompleto())){
             usuarioExistente.setNomeCompleto(usuarioRequest.getNomeCompleto());
@@ -148,13 +149,4 @@ public class UsuarioServiceImpl implements UsuarioUseCase{
         }
     }
 
-
-//    private UsuarioDomain merge(Map<String, Object> camposOrigem, UsuarioDomain usuarioDetalhado){
-//
-//        ObjectMapper objectMapper = new ObjectMapper();
-//        UsuarioDomain usuarioRequestUpdateOrigem = objectMapper.convertValue(camposOrigem, UsuarioDomain.class);
-//
-//
-//        return usuarioDetalhado;
-//    }
 }

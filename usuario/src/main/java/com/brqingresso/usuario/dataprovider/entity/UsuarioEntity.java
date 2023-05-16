@@ -41,8 +41,8 @@ public class UsuarioEntity {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     LocalDate dataNascimento;
 
-    @Column(length = 13)
-    Integer celular;
+    @Column(length = 11)
+    Long celular;
 
     @Column(nullable = false, length = 2)
     Integer sexo;

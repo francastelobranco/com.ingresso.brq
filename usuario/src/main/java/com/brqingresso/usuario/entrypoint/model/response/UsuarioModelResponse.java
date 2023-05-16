@@ -22,7 +22,7 @@ public class UsuarioModelResponse {
     private String nomeCompleto;
     private String apelido;
     private LocalDate dataNascimento;
-    private Integer celular;
+    private Long celular;
     private String sexo;
     private OffsetDateTime dataCadastro;
     private OffsetDateTime dataAtualizacao;

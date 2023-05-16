@@ -20,7 +20,7 @@ public class UsuarioDomain {
     String senha;
     String apelido;
     LocalDate dataNascimento;
-    Integer celular;
+    Long celular;
     String sexo;
     OffsetDateTime dataCadastro;
     OffsetDateTime dataAtualizacao;

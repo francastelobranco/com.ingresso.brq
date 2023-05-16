@@ -1,8 +1,11 @@
 package com.brqingresso.usuario.entrypoint.model.request;
 
+import com.brqingresso.usuario.entrypoint.validation.Celular;
+import com.brqingresso.usuario.entrypoint.validation.EmailCompleto;
+import com.brqingresso.usuario.entrypoint.validation.Nome;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.Singular;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
@@ -15,16 +18,35 @@ import java.time.LocalDate;
 public class UsuarioModelRequest {
 
     @NotBlank
-    @NotNull
     @Size(min = 11, max = 11)
     private String cpf;
 
+    @EmailCompleto
+    @Size(min = 5, max = 50)
     private String email;
+
+    @NotBlank
+    @Nome
+    @Size(min = 2, max = 100)
     private String nomeCompleto;
+
+    @NotBlank
+    @Size(min = 2, max = 100)
     private String senha;
+
+    @Size(min = 2, max = 20)
     private String apelido;
+
+    @NotNull
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate dataNascimento;
-    private Integer celular;
+
+    @NotNull
+    @Celular
+    private Long celular;
+
+    @NotBlank
+    @Size(max = 2)
     private String sexo;
 
     @Valid
