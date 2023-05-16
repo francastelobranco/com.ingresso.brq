@@ -34,7 +34,7 @@ public class UsuarioModelRequest {
     @Size(min = 2, max = 100)
     private String senha;
 
-    @Size(min = 2, max = 20)
+    @Size(max = 20)
     private String apelido;
 
     @NotNull

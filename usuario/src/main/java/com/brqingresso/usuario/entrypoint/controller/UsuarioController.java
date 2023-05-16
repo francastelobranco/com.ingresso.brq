@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/challengebrq/v1/usuarios")
@@ -82,7 +83,7 @@ public class UsuarioController {
     }
 
     @GetMapping("/{idUsuario}/senhas")
-    public ResponseEntity<String> gerarCodigoAlteracaoSenha(@PathVariable(value = "idUsuario") String idUsuario){
+    public ResponseEntity<UUID> gerarCodigoAlteracaoSenha(@PathVariable(value = "idUsuario") String idUsuario){
        var codigo = usuarioUseCase.gerarCodigoAlteracaoSenha(idUsuario);
        return ResponseEntity.status(HttpStatus.OK).body(codigo);
     }

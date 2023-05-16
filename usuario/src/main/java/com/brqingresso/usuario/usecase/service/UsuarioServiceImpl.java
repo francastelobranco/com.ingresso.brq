@@ -22,7 +22,6 @@ public class UsuarioServiceImpl implements UsuarioUseCase{
     @Override
     public UsuarioDomain cadastrarUsuario(UsuarioDomain usuarioDomain) {
         validaCpfEmUso(usuarioDomain.getCpf());
-//        validarPais(usuarioDomain.getEndereco().getPais());
         usuarioDomain.setId(UUID.randomUUID().toString());
 
         if(usuarioDomain.getDataNascimento().isAfter(LocalDate.now()))
@@ -121,9 +120,9 @@ public class UsuarioServiceImpl implements UsuarioUseCase{
     }
 
     @Override
-    public String gerarCodigoAlteracaoSenha(String idUsuario) {
-        var usuario = detalharUsuario(idUsuario);
-        String codigo = UUID.randomUUID().toString();
+    public UUID gerarCodigoAlteracaoSenha(String idUsuario) {
+        detalharUsuario(idUsuario);
+        UUID codigo = UUID.randomUUID();
         return codigo;
     }
 
@@ -131,8 +130,11 @@ public class UsuarioServiceImpl implements UsuarioUseCase{
     public void recuperarSenha(String idUsuario, RecuperarSenhaDomain recuperarSenha) {
         var usuario = detalharUsuario(idUsuario);
 
+        if (!recuperarSenha.getCodigoSeguranca().equals(UUID.class)){
+            System.out.println("é uuid");
+        }
         try {
-            UUID.fromString(recuperarSenha.getCodigoSeguranca());
+            recuperarSenha.getCodigoSeguranca();
             usuario.setSenha(recuperarSenha.getNovaSenha());
 
             usuarioGateway.atualizarUsuario(usuario);

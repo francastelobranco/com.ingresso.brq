@@ -7,6 +7,7 @@ import com.brqingresso.usuario.usecase.domain.UsuarioDomain;
 
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 public interface UsuarioUseCase {
 
@@ -16,6 +17,6 @@ public interface UsuarioUseCase {
     UsuarioDomain atualizarUsuario(String idUsuario, UsuarioDomain usuarioRequest);
     void deletarUsuario(String id);
     void alterarSenha(String idUsuario, SenhaDomain senha);
-    String gerarCodigoAlteracaoSenha(String idUsuario);
+    UUID gerarCodigoAlteracaoSenha(String idUsuario);
     void recuperarSenha(String idUsuario, RecuperarSenhaDomain recuperarSenha);
 }

@@ -2,6 +2,8 @@ package com.brqingresso.usuario.usecase.domain;
 
 import lombok.*;
 
+import java.util.UUID;
+
 @Builder
 @Getter
 @Setter
@@ -9,6 +11,6 @@ import lombok.*;
 @NoArgsConstructor
 public class RecuperarSenhaDomain {
 
-    private String codigoSeguranca;
+    private UUID codigoSeguranca;
     private String novaSenha;
 }
