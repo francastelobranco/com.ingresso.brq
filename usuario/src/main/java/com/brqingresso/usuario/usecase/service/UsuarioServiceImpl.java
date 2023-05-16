@@ -131,7 +131,6 @@ public class UsuarioServiceImpl implements UsuarioUseCase{
         var usuario = detalharUsuario(idUsuario);
 
         try {
-            //recuperarSenha.getCodigoSeguranca();
             usuario.setSenha(recuperarSenha.getNovaSenha());
             return usuarioGateway.atualizarUsuario(usuario);
 
