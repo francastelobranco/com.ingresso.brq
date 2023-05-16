@@ -18,5 +18,5 @@ public interface UsuarioUseCase {
     void deletarUsuario(String id);
     void alterarSenha(String idUsuario, SenhaDomain senha);
     UUID gerarCodigoAlteracaoSenha(String idUsuario);
-    void recuperarSenha(String idUsuario, RecuperarSenhaDomain recuperarSenha);
+    UsuarioDomain recuperarSenha(String idUsuario, RecuperarSenhaDomain recuperarSenha);
 }

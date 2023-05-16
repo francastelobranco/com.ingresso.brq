@@ -89,9 +89,11 @@ public class UsuarioController {
     }
 
     @PostMapping("/{idUsuario}/senhas")
-    public ResponseEntity recuperarSenha(@PathVariable(value = "idUsuario") String idUsuario, @RequestBody RecuperarSenhaModelRequest senhaModelRequest){
+    public ResponseEntity<UsuarioModelResponse> recuperarSenha(@PathVariable(value = "idUsuario") String idUsuario, @RequestBody RecuperarSenhaModelRequest senhaModelRequest){
         RecuperarSenhaDomain senha = RecuperarSenhaEntryPointMapperRequest.convertToDomain(senhaModelRequest);
-        usuarioUseCase.recuperarSenha(idUsuario, senha);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        UsuarioDomain usuarioDomainAtualizado = usuarioUseCase.recuperarSenha(idUsuario, senha);
+        UsuarioModelResponse usuarioModelAtualizado = UsuarioEntryPointMapperResponse.convertToModel(usuarioDomainAtualizado);
+
+        return ResponseEntity.status(HttpStatus.OK).body(usuarioModelAtualizado);
     }
 }

@@ -127,17 +127,14 @@ public class UsuarioServiceImpl implements UsuarioUseCase{
     }
 
     @Override
-    public void recuperarSenha(String idUsuario, RecuperarSenhaDomain recuperarSenha) {
+    public UsuarioDomain recuperarSenha(String idUsuario, RecuperarSenhaDomain recuperarSenha) {
         var usuario = detalharUsuario(idUsuario);
 
-        if (!recuperarSenha.getCodigoSeguranca().equals(UUID.class)){
-            System.out.println("é uuid");
-        }
         try {
-            recuperarSenha.getCodigoSeguranca();
+            //recuperarSenha.getCodigoSeguranca();
             usuario.setSenha(recuperarSenha.getNovaSenha());
+            return usuarioGateway.atualizarUsuario(usuario);
 
-            usuarioGateway.atualizarUsuario(usuario);
         } catch (IllegalArgumentException e) {
             throw new RuntimeException();
         }
