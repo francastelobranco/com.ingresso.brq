@@ -1,6 +1,7 @@
 package com.brqingresso.usuario.dataprovider.implementation;
 
 import com.brqingresso.usuario.dataprovider.entity.UsuarioEntity;
+import com.brqingresso.usuario.dataprovider.exception.UsuarioNaoEncontradoException;
 import com.brqingresso.usuario.dataprovider.mapper.request.UsuarioRequestMapperProvider;
 import com.brqingresso.usuario.dataprovider.mapper.response.UsuarioResponseMapperProvider;
 import com.brqingresso.usuario.dataprovider.repository.UsuarioRepository;
@@ -37,7 +38,7 @@ public class UsuarioDataProvider implements UsuarioGateway {
 
     @Override
     public UsuarioDomain detalharUsuario(String id) {
-       UsuarioEntity usuarioEntity = repository.findById(id).orElseThrow(() -> new RuntimeException(String.format("Usuário com ID %s não cadastrado", id)));
+       UsuarioEntity usuarioEntity = repository.findById(id).orElseThrow(() -> new UsuarioNaoEncontradoException(String.format("Usuário com ID %s não cadastrado", id)));
        UsuarioDomain usuarioDomain = UsuarioResponseMapperProvider.convertToDomain(usuarioEntity);
        return usuarioDomain;
     }
@@ -53,7 +54,7 @@ public class UsuarioDataProvider implements UsuarioGateway {
 
     @Override
     public void deletarUsuario(String id) {
-        UsuarioEntity usuarioEntity = repository.findById(id).orElseThrow(() -> new RuntimeException(String.format("Não existe usuário com id: %s", id )));
+        UsuarioEntity usuarioEntity = repository.findById(id).orElseThrow(() -> new UsuarioNaoEncontradoException(String.format("Não existe usuário com id: %s", id )));
         repository.delete(usuarioEntity);
     }
 

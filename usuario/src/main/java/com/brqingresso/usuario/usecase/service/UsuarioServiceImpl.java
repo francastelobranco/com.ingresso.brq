@@ -3,6 +3,9 @@ package com.brqingresso.usuario.usecase.service;
 import com.brqingresso.usuario.usecase.domain.RecuperarSenhaDomain;
 import com.brqingresso.usuario.usecase.domain.SenhaDomain;
 import com.brqingresso.usuario.usecase.domain.UsuarioDomain;
+import com.brqingresso.usuario.usecase.exception.CpfEmUsoException;
+import com.brqingresso.usuario.usecase.exception.DataIncorretaException;
+import com.brqingresso.usuario.usecase.exception.SenhaIncorretaException;
 import com.brqingresso.usuario.usecase.gateway.UsuarioGateway;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +29,7 @@ public class UsuarioServiceImpl implements UsuarioUseCase{
 
         if(usuarioDomain.getDataNascimento().isAfter(LocalDate.now()))
         {
-            throw new RuntimeException("A data informada é inválida.");
+            throw new DataIncorretaException("A data informada é inválida.");
         }
 
         return usuarioGateway.cadastrarUsuario(usuarioDomain);
@@ -59,7 +62,7 @@ public class UsuarioServiceImpl implements UsuarioUseCase{
         if(Objects.nonNull(usuarioRequest.getDataNascimento())){
             if(usuarioRequest.getDataNascimento().isAfter(LocalDate.now()))
             {
-                throw new RuntimeException("A data informada é inválida.");
+                throw new DataIncorretaException("A data informada é inválida.");
             }
             usuarioExistente.setDataNascimento(usuarioRequest.getDataNascimento());
         }
@@ -113,7 +116,7 @@ public class UsuarioServiceImpl implements UsuarioUseCase{
     public void alterarSenha(String idUsuario, SenhaDomain senha) {
         var usuario = detalharUsuario(idUsuario);
         if (!usuario.getSenha().equals(senha.getSenhaAtual())){
-            throw new RuntimeException("A senha atual está incorreta");
+            throw new SenhaIncorretaException("A senha atual está incorreta");
         }
         usuario.setSenha(senha.getNovaSenha());
         usuarioGateway.atualizarUsuario(usuario);
@@ -143,7 +146,7 @@ public class UsuarioServiceImpl implements UsuarioUseCase{
         boolean validaCpf = usuarioGateway.verificaCpfExiste(cpf);
 
         if (validaCpf) {
-            throw new RuntimeException(String.format("O CPF %s já está cadastrado", cpf));
+            throw new CpfEmUsoException(String.format("O CPF %s já está cadastrado", cpf));
         }
     }
 
