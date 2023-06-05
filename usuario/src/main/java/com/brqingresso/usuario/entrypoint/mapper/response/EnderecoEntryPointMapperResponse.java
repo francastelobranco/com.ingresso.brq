@@ -9,6 +9,7 @@ public class EnderecoEntryPointMapperResponse {
 
         return EnderecoModelResponse.builder()
                 .logradouro(enderecoDomain.getLogradouro())
+                .complemento(enderecoDomain.getComplemento())
                 .numero(enderecoDomain.getNumero())
                 .bairro(enderecoDomain.getBairro())
                 .cidade(enderecoDomain.getCidade())

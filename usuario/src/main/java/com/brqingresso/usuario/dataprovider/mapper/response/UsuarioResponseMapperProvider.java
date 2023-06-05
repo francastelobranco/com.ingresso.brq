@@ -27,6 +27,8 @@ public class UsuarioResponseMapperProvider {
                 .dataAtualizacao(usuarioEntity.getDataAtualizacao())
                 .celular(usuarioEntity.getCelular())
                 .sexo(SexoEnum.getSigla(usuarioEntity.getSexo()))
+                .codigoSeguranca(usuarioEntity.getCodigoSeguranca())
+                .dataHoraCodigoSeguranca(usuarioEntity.getDataHoraCodigoSeguranca())
                 .endereco(EnderecoResponseMapperProvider.convertToModel(usuarioEntity.getEndereco()))
                 .build();
     }
@@ -41,13 +43,6 @@ public class UsuarioResponseMapperProvider {
     }
 
     public static List<UsuarioDomain> convertToDomainList(List<UsuarioEntity> listaUsuariosEntity) {
-        //List<UsuarioDomain> listaUsuariosDomain = new ArrayList<>();
-
-//        for (UsuarioEntity usuario : listaUsuariosEntity) {
-//            listaUsuariosDomain.add(convert(usuario));
-//        }
-//            return listaUsuariosDomain;
-
         return listaUsuariosEntity.stream()
                 .map(usuarioEntity -> convert(usuarioEntity))
                 .collect(Collectors.toList());

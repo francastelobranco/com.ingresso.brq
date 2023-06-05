@@ -51,6 +51,10 @@ public class UsuarioEntity {
 
     OffsetDateTime dataAtualizacao;
 
+    String codigoSeguranca;
+
+    OffsetDateTime dataHoraCodigoSeguranca;
+
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "endereco_id")
     private EnderecoEntity endereco;

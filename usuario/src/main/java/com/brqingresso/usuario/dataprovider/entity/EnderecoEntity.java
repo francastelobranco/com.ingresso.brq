@@ -37,7 +37,10 @@ public class EnderecoEntity {
     @Column(length = 3)
     String pais;
 
-    @Column(length = 8)
+    @Column(length = 9)
     String cep;
+
+    @Column(length = 50)
+    String complemento;
 
 }

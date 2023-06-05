@@ -46,7 +46,7 @@ public class UsuarioModelRequest {
     private Long celular;
 
     @NotBlank
-    @Size(max = 2)
+   // @Size(max = 2)
     private String sexo;
 
     @Valid

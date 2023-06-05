@@ -1,18 +1,24 @@
 package com.brqingresso.usuario.usecase.service;
 
+import com.brqingresso.usuario.usecase.domain.EnderecoDomain;
 import com.brqingresso.usuario.usecase.domain.RecuperarSenhaDomain;
 import com.brqingresso.usuario.usecase.domain.SenhaDomain;
 import com.brqingresso.usuario.usecase.domain.UsuarioDomain;
-import com.brqingresso.usuario.usecase.exception.CpfEmUsoException;
-import com.brqingresso.usuario.usecase.exception.DataIncorretaException;
-import com.brqingresso.usuario.usecase.exception.SenhaIncorretaException;
+import com.brqingresso.usuario.usecase.dto.EnderecoViaCep;
+import com.brqingresso.usuario.usecase.exception.*;
 import com.brqingresso.usuario.usecase.gateway.UsuarioGateway;
+import com.brqingresso.usuario.usecase.mapper.EnderecoViaCepMapperRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
 import java.time.LocalDate;
+import java.time.OffsetDateTime;
+import java.time.temporal.ChronoField;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -23,16 +29,27 @@ public class UsuarioServiceImpl implements UsuarioUseCase{
     UsuarioGateway usuarioGateway;
 
     @Override
-    public UsuarioDomain cadastrarUsuario(UsuarioDomain usuarioDomain) {
-        validaCpfEmUso(usuarioDomain.getCpf());
-        usuarioDomain.setId(UUID.randomUUID().toString());
+    public UsuarioDomain cadastrarUsuario(UsuarioDomain usuarioDomain) throws ErroComunicacaoApiExternaException {
+            validaCpfEmUso(usuarioDomain.getCpf());
+            usuarioDomain.setId(UUID.randomUUID().toString());
 
-        if(usuarioDomain.getDataNascimento().isAfter(LocalDate.now()))
-        {
-            throw new DataIncorretaException("A data informada é inválida.");
-        }
+            if(usuarioDomain.getDataNascimento().isAfter(LocalDate.now()))
+            {
+                throw new DataIncorretaException("A data informada é inválida.");
+            }
 
-        return usuarioGateway.cadastrarUsuario(usuarioDomain);
+            EnderecoViaCep endereco = usuarioGateway.consultaCep(usuarioDomain.getEndereco().getCep());
+            EnderecoDomain enderecoDomain = EnderecoViaCepMapperRequest.converteToDomain(endereco);
+
+            if (enderecoDomain.getComplemento().isEmpty()){
+                enderecoDomain.setComplemento(usuarioDomain.getEndereco().getComplemento());
+            }
+
+            enderecoDomain.setNumero(usuarioDomain.getEndereco().getNumero());
+            enderecoDomain.setPais(new Locale("pt", "BR").getCountry());
+            usuarioDomain.setEndereco(enderecoDomain);
+
+            return usuarioGateway.cadastrarUsuario(usuarioDomain);
     }
 
     @Override
@@ -42,7 +59,6 @@ public class UsuarioServiceImpl implements UsuarioUseCase{
 
     @Override
     public UsuarioDomain detalharUsuario(String id) {
-        //todo: validar
         return usuarioGateway.detalharUsuario(id);
     }
 
@@ -123,23 +139,35 @@ public class UsuarioServiceImpl implements UsuarioUseCase{
     }
 
     @Override
-    public UUID gerarCodigoAlteracaoSenha(String idUsuario) {
-        detalharUsuario(idUsuario);
+    public String gerarCodigoAlteracaoSenha(String idUsuario) {
+        UsuarioDomain usuario = detalharUsuario(idUsuario);
         UUID codigo = UUID.randomUUID();
-        return codigo;
+        usuario.setCodigoSeguranca(codigo.toString());
+        usuario.setDataHoraCodigoSeguranca(OffsetDateTime.now().with(ChronoField.MILLI_OF_SECOND, 0));
+        usuarioGateway.atualizarUsuario(usuario);
+        return usuario.getCodigoSeguranca();
     }
 
     @Override
     public UsuarioDomain recuperarSenha(String idUsuario, RecuperarSenhaDomain recuperarSenha) {
         var usuario = detalharUsuario(idUsuario);
+        OffsetDateTime tempoExpirado = usuario.getDataHoraCodigoSeguranca().plus(5, ChronoUnit.MINUTES);
 
-        try {
-            usuario.setSenha(recuperarSenha.getNovaSenha());
-            return usuarioGateway.atualizarUsuario(usuario);
-
-        } catch (IllegalArgumentException e) {
-            throw new RuntimeException();
+        if (!usuario.getCodigoSeguranca().equals(recuperarSenha.getCodigoSeguranca().toString())){
+            throw new CodigoSegurancaIncorretoException("O codigo de segurança informado está incorreto");
         }
+
+        if (tempoExpirado.isBefore(OffsetDateTime.now())){
+            throw new TokenExpiradoException("Token de segurança expirado");
+        }
+
+        if (usuario.getSenha().equals(recuperarSenha.getNovaSenha())){
+            throw new SenhaIncorretaException("A senha informada é a mesma que está cadastrada. Informe uma senha diferente");
+        }
+
+        usuario.setSenha(recuperarSenha.getNovaSenha());
+        return usuarioGateway.atualizarUsuario(usuario);
+
     }
 
     private void validaCpfEmUso(String cpf) {
@@ -149,5 +177,4 @@ public class UsuarioServiceImpl implements UsuarioUseCase{
             throw new CpfEmUsoException(String.format("O CPF %s já está cadastrado", cpf));
         }
     }
-
 }

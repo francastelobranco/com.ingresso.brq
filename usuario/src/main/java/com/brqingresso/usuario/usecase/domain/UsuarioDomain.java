@@ -24,5 +24,7 @@ public class UsuarioDomain {
     String sexo;
     OffsetDateTime dataCadastro;
     OffsetDateTime dataAtualizacao;
+    String codigoSeguranca;
+    OffsetDateTime dataHoraCodigoSeguranca;
     EnderecoDomain endereco;
 }

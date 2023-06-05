@@ -19,6 +19,7 @@ public class EnderecoResponseMapperProvider {
                 .estado(endereco.getEstado())
                 .pais(endereco.getPais())
                 .cep(endereco.getCep())
+                .complemento(endereco.getComplemento())
                 .build();
     }
 }

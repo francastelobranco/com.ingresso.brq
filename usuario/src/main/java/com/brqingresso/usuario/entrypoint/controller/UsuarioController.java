@@ -11,18 +11,16 @@ import com.brqingresso.usuario.entrypoint.model.response.UsuarioModelResponse;
 import com.brqingresso.usuario.usecase.domain.RecuperarSenhaDomain;
 import com.brqingresso.usuario.usecase.domain.SenhaDomain;
 import com.brqingresso.usuario.usecase.domain.UsuarioDomain;
+import com.brqingresso.usuario.usecase.exception.ErroComunicacaoApiExternaException;
 import com.brqingresso.usuario.usecase.service.UsuarioUseCase;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.ReflectionUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/challengebrq/v1/usuarios")
@@ -32,7 +30,7 @@ public class UsuarioController {
     UsuarioUseCase usuarioUseCase;
 
     @PostMapping
-    public ResponseEntity<UsuarioModelResponse> cadastrarUsuario(@RequestBody @Valid UsuarioModelRequest usuarioModelRequest){
+    public ResponseEntity<UsuarioModelResponse> cadastrarUsuario(@RequestBody @Valid UsuarioModelRequest usuarioModelRequest) throws ErroComunicacaoApiExternaException {
         UsuarioDomain usuarioDomain = UsuarioEntryPointMapperRequest.convertToDomain(usuarioModelRequest);
         usuarioDomain = usuarioUseCase.cadastrarUsuario(usuarioDomain);
         UsuarioModelResponse usuarioModel = UsuarioEntryPointMapperResponse.convertToModel(usuarioDomain);
@@ -83,7 +81,7 @@ public class UsuarioController {
     }
 
     @GetMapping("/{idUsuario}/senhas")
-    public ResponseEntity<UUID> gerarCodigoAlteracaoSenha(@PathVariable(value = "idUsuario") String idUsuario){
+    public ResponseEntity<String> gerarCodigoAlteracaoSenha(@PathVariable(value = "idUsuario") String idUsuario){
        var codigo = usuarioUseCase.gerarCodigoAlteracaoSenha(idUsuario);
        return ResponseEntity.status(HttpStatus.OK).body(codigo);
     }

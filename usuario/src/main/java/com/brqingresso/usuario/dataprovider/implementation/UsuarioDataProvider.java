@@ -2,23 +2,28 @@ package com.brqingresso.usuario.dataprovider.implementation;
 
 import com.brqingresso.usuario.dataprovider.entity.UsuarioEntity;
 import com.brqingresso.usuario.dataprovider.exception.UsuarioNaoEncontradoException;
+import com.brqingresso.usuario.dataprovider.http.ConsultaApi;
 import com.brqingresso.usuario.dataprovider.mapper.request.UsuarioRequestMapperProvider;
 import com.brqingresso.usuario.dataprovider.mapper.response.UsuarioResponseMapperProvider;
 import com.brqingresso.usuario.dataprovider.repository.UsuarioRepository;
 import com.brqingresso.usuario.usecase.domain.UsuarioDomain;
+import com.brqingresso.usuario.usecase.dto.EnderecoViaCep;
+import com.brqingresso.usuario.usecase.exception.ErroComunicacaoApiExternaException;
 import com.brqingresso.usuario.usecase.gateway.UsuarioGateway;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
 
 @Component
 public class UsuarioDataProvider implements UsuarioGateway {
 
     @Autowired
     UsuarioRepository repository;
+
+    @Autowired
+    ConsultaApi consultaApi;
 
     @Override
     public UsuarioDomain cadastrarUsuario(UsuarioDomain usuarioDomain) {
@@ -63,5 +68,13 @@ public class UsuarioDataProvider implements UsuarioGateway {
         return  repository.existsByCpf(cpf);
     }
 
-
+    @Override
+    public EnderecoViaCep consultaCep(String cep) throws ErroComunicacaoApiExternaException {
+        try {
+            EnderecoViaCep endereco = consultaApi.consultaCep(cep);
+            return endereco;
+        } catch (IOException e) {
+            throw new ErroComunicacaoApiExternaException("Erro na comunicação com a API externa: " + e.getMessage());
+        }
+    }
 }

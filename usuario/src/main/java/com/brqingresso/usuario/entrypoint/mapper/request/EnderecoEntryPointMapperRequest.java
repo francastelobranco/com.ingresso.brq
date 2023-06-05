@@ -8,13 +8,9 @@ public class EnderecoEntryPointMapperRequest {
     public static EnderecoDomain convertToDomain(EnderecoModelRequest endereco){
         
         return EnderecoDomain.builder()
-                .logradouro(endereco.getLogradouro())
-                .numero(endereco.getNumero())
-                .bairro(endereco.getBairro())
-                .cidade(endereco.getCidade())
-                .estado(endereco.getEstado())
-                .pais(endereco.getPais())
                 .cep(endereco.getCep())
+                .numero(endereco.getNumero())
+                .complemento(endereco.getComplemento())
                 .build();
     }
 

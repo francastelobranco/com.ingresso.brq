@@ -43,7 +43,10 @@ public class UsuarioRequestMapperProvider {
                 .dataNascimento(usuario.getDataNascimento())
                 .celular(usuario.getCelular())
                 .sexo(SexoEnum.getCodigoSexo(usuario.getSexo()))
+                .codigoSeguranca(usuario.getCodigoSeguranca())
+                .dataHoraCodigoSeguranca(usuario.getDataHoraCodigoSeguranca())
                 .endereco(EnderecoRequestMapperProvider.convertToEntity(usuario.getEndereco()))
                 .build();
     }
+
 }

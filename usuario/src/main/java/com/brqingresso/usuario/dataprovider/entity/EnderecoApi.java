@@ -1,4 +1,4 @@
-package com.brqingresso.usuario.usecase.domain;
+package com.brqingresso.usuario.dataprovider.entity;
 
 import lombok.*;
 
@@ -7,14 +7,12 @@ import lombok.*;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class EnderecoDomain {
+public class EnderecoApi {
 
     String logradouro;
-    String numero;
+    String localidade;
+    String uf;
     String bairro;
-    String cidade;
-    String estado;
-    String pais;
     String cep;
     String complemento;
 }

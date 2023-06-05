@@ -2,8 +2,6 @@ package com.brqingresso.usuario.usecase.service.mock;
 
 import com.brqingresso.usuario.usecase.domain.EnderecoDomain;
 
-import java.util.List;
-
 public class EnderecoRequestTest {
 
     public static EnderecoDomain mockEnderecoDomain(){

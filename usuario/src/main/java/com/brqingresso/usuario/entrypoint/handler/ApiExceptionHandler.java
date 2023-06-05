@@ -1,9 +1,7 @@
 package com.brqingresso.usuario.entrypoint.handler;
 
 import com.brqingresso.usuario.dataprovider.exception.UsuarioNaoEncontradoException;
-import com.brqingresso.usuario.usecase.exception.CpfEmUsoException;
-import com.brqingresso.usuario.usecase.exception.DataIncorretaException;
-import com.brqingresso.usuario.usecase.exception.SenhaIncorretaException;
+import com.brqingresso.usuario.usecase.exception.*;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -39,7 +37,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(CpfEmUsoException.class)
     public ResponseEntity<Object> handleCpfEmUsoException(CpfEmUsoException ex, WebRequest request){
-        HttpStatus status = HttpStatus.BAD_REQUEST;
+        HttpStatus status = HttpStatus.CONFLICT;
         String type = "CPF_EM_USO";
         String tittle = "Cpf inválido";
         String detail = ex.getMessage();
@@ -50,13 +48,43 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(SenhaIncorretaException.class)
     public ResponseEntity<Object> handleSenhaIncorretaException(SenhaIncorretaException ex, WebRequest request){
         HttpStatus status = HttpStatus.BAD_REQUEST;
-        String type = "SENHA_INCORRETA";
-        String tittle = "Senha incorreta";
+        String type = "SENHA_INVÁLIDA";
+        String tittle = "Senha inválida";
         String detail = ex.getMessage();
         ResponseException responseException = criaResponseException(status, type, tittle, detail).build();
         return handleExceptionInternal(ex, responseException, new HttpHeaders(), status, request);
     }
 
+
+    @ExceptionHandler(ErroComunicacaoApiExternaException.class)
+    public ResponseEntity<Object> handleSenhaIncorretaException(ErroComunicacaoApiExternaException ex, WebRequest request){
+        HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
+        String type = "ERRO_INTERNO";
+        String tittle = "Erro interno";
+        String detail = ex.getMessage();
+        ResponseException responseException = criaResponseException(status, type, tittle, detail).build();
+        return handleExceptionInternal(ex, responseException, new HttpHeaders(), status, request);
+    }
+
+    @ExceptionHandler(CodigoSegurancaIncorretoException.class)
+    public ResponseEntity<Object> handleSenhaIncorretaException(CodigoSegurancaIncorretoException ex, WebRequest request){
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        String type = "CODIGO_INCORRETO";
+        String tittle = "Código de segurança incorreto";
+        String detail = ex.getMessage();
+        ResponseException responseException = criaResponseException(status, type, tittle, detail).build();
+        return handleExceptionInternal(ex, responseException, new HttpHeaders(), status, request);
+    }
+
+    @ExceptionHandler(TokenExpiradoException.class)
+    public ResponseEntity<Object> handleSenhaIncorretaException(TokenExpiradoException ex, WebRequest request){
+        HttpStatus status = HttpStatus.REQUEST_TIMEOUT;
+        String type = "TOKEN_EXPIRADO";
+        String tittle = "Token de segurança expirado";
+        String detail = ex.getMessage();
+        ResponseException responseException = criaResponseException(status, type, tittle, detail).build();
+        return handleExceptionInternal(ex, responseException, new HttpHeaders(), status, request);
+    }
 
     @Override
     protected ResponseEntity<Object> handleExceptionInternal(Exception ex, Object body, HttpHeaders headers, HttpStatus status, WebRequest request){
@@ -86,4 +114,5 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
                 .detail(detail)
                 .title(tittle);
     }
+
 }
