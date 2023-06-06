@@ -11,7 +11,7 @@ import javax.validation.constraints.Size;
 public class EnderecoModelRequest {
 
     @NotBlank
-    @Size(min = 8, max = 8)
+    //@Size(min = 8, max = 8)
     private String cep;
 
     @NotBlank

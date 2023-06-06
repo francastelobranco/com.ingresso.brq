@@ -8,13 +8,14 @@ import com.brqingresso.usuario.dataprovider.mapper.response.UsuarioResponseMappe
 import com.brqingresso.usuario.dataprovider.repository.UsuarioRepository;
 import com.brqingresso.usuario.usecase.domain.UsuarioDomain;
 import com.brqingresso.usuario.usecase.dto.EnderecoViaCep;
-import com.brqingresso.usuario.usecase.exception.ErroComunicacaoApiExternaException;
+import com.brqingresso.usuario.usecase.exception.ViaCepExceptionBadRequest;
+import com.brqingresso.usuario.usecase.exception.ViaCepExceptionNotFound;
 import com.brqingresso.usuario.usecase.gateway.UsuarioGateway;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 
 @Component
 public class UsuarioDataProvider implements UsuarioGateway {
@@ -69,12 +70,14 @@ public class UsuarioDataProvider implements UsuarioGateway {
     }
 
     @Override
-    public EnderecoViaCep consultaCep(String cep) throws ErroComunicacaoApiExternaException {
-        try {
-            EnderecoViaCep endereco = consultaApi.consultaCep(cep);
-            return endereco;
-        } catch (IOException e) {
-            throw new ErroComunicacaoApiExternaException("Erro na comunicação com a API externa: " + e.getMessage());
+    public EnderecoViaCep consultaCep(String cep) {
+        EnderecoViaCep endereco = consultaApi.consultaCep(cep);
+
+        if (Objects.isNull(endereco.getCep())){
+            throw new ViaCepExceptionNotFound("O CEP informado não foi encotrado");
         }
+        return endereco;
     }
 }
+
+

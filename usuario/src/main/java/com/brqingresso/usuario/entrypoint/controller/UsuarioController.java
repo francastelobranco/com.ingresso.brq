@@ -11,7 +11,6 @@ import com.brqingresso.usuario.entrypoint.model.response.UsuarioModelResponse;
 import com.brqingresso.usuario.usecase.domain.RecuperarSenhaDomain;
 import com.brqingresso.usuario.usecase.domain.SenhaDomain;
 import com.brqingresso.usuario.usecase.domain.UsuarioDomain;
-import com.brqingresso.usuario.usecase.exception.ErroComunicacaoApiExternaException;
 import com.brqingresso.usuario.usecase.service.UsuarioUseCase;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -30,7 +29,7 @@ public class UsuarioController {
     UsuarioUseCase usuarioUseCase;
 
     @PostMapping
-    public ResponseEntity<UsuarioModelResponse> cadastrarUsuario(@RequestBody @Valid UsuarioModelRequest usuarioModelRequest) throws ErroComunicacaoApiExternaException {
+    public ResponseEntity<UsuarioModelResponse> cadastrarUsuario(@RequestBody @Valid UsuarioModelRequest usuarioModelRequest) {
         UsuarioDomain usuarioDomain = UsuarioEntryPointMapperRequest.convertToDomain(usuarioModelRequest);
         usuarioDomain = usuarioUseCase.cadastrarUsuario(usuarioDomain);
         UsuarioModelResponse usuarioModel = UsuarioEntryPointMapperResponse.convertToModel(usuarioDomain);

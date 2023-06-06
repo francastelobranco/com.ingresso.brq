@@ -1,5 +1,6 @@
 package com.brqingresso.usuario.entrypoint.handler;
 
+import com.brqingresso.usuario.dataprovider.exception.ErroComunicacaoApiExternaException;
 import com.brqingresso.usuario.dataprovider.exception.UsuarioNaoEncontradoException;
 import com.brqingresso.usuario.usecase.exception.*;
 import org.springframework.http.HttpHeaders;
@@ -57,7 +58,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
 
     @ExceptionHandler(ErroComunicacaoApiExternaException.class)
-    public ResponseEntity<Object> handleSenhaIncorretaException(ErroComunicacaoApiExternaException ex, WebRequest request){
+    public ResponseEntity<Object> handleComunicacaoApiExternaException(ErroComunicacaoApiExternaException ex, WebRequest request){
         HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
         String type = "ERRO_INTERNO";
         String tittle = "Erro interno";
@@ -65,6 +66,28 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         ResponseException responseException = criaResponseException(status, type, tittle, detail).build();
         return handleExceptionInternal(ex, responseException, new HttpHeaders(), status, request);
     }
+
+    @ExceptionHandler(ViaCepExceptionBadRequest.class)
+    public ResponseEntity<Object> handleViaCepExceptionExceptionBadRequest(ViaCepExceptionBadRequest ex, WebRequest request){
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        String type = "CEP_INVÁLIDO";
+        String tittle = "Cep incorreto";
+        String detail = ex.getMessage();
+        ResponseException responseException = criaResponseException(status, type, tittle, detail).build();
+        return handleExceptionInternal(ex, responseException, new HttpHeaders(), status, request);
+    }
+
+    @ExceptionHandler(ViaCepExceptionNotFound.class)
+    public ResponseEntity<Object> handleViaCepExceptionExceptionNotFound(ViaCepExceptionNotFound ex, WebRequest request){
+        HttpStatus status = HttpStatus.NOT_FOUND;
+        String type = "CEP_NAO_ENCONTRADO";
+        String tittle = "Cep inválido";
+        String detail = ex.getMessage();
+        ResponseException responseException = criaResponseException(status, type, tittle, detail).build();
+        return handleExceptionInternal(ex, responseException, new HttpHeaders(), status, request);
+    }
+
+
 
     @ExceptionHandler(CodigoSegurancaIncorretoException.class)
     public ResponseEntity<Object> handleSenhaIncorretaException(CodigoSegurancaIncorretoException ex, WebRequest request){

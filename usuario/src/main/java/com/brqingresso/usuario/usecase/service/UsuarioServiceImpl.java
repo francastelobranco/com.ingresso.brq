@@ -12,7 +12,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.time.temporal.ChronoField;
@@ -29,7 +28,7 @@ public class UsuarioServiceImpl implements UsuarioUseCase{
     UsuarioGateway usuarioGateway;
 
     @Override
-    public UsuarioDomain cadastrarUsuario(UsuarioDomain usuarioDomain) throws ErroComunicacaoApiExternaException {
+    public UsuarioDomain cadastrarUsuario(UsuarioDomain usuarioDomain)  {
             validaCpfEmUso(usuarioDomain.getCpf());
             usuarioDomain.setId(UUID.randomUUID().toString());
 
@@ -38,7 +37,11 @@ public class UsuarioServiceImpl implements UsuarioUseCase{
                 throw new DataIncorretaException("A data informada é inválida.");
             }
 
-            EnderecoViaCep endereco = usuarioGateway.consultaCep(usuarioDomain.getEndereco().getCep());
+            if (usuarioDomain.getEndereco().getCep().length() > 8) {
+                throw new ViaCepExceptionBadRequest("O CEP informado está no formato inválido");
+            }
+
+        EnderecoViaCep endereco = usuarioGateway.consultaCep(usuarioDomain.getEndereco().getCep());
             EnderecoDomain enderecoDomain = EnderecoViaCepMapperRequest.converteToDomain(endereco);
 
             if (enderecoDomain.getComplemento().isEmpty()){
