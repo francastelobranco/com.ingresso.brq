@@ -94,6 +94,17 @@ public class UsuarioServiceImpl implements UsuarioUseCase{
             usuarioExistente.setSexo(usuarioRequest.getSexo());
         }
 
+        EnderecoViaCep endereco = usuarioGateway.consultaCep(usuarioRequest.getEndereco().getCep());
+        EnderecoDomain enderecoDomain = EnderecoViaCepMapperRequest.converteToDomain(endereco);
+
+        if (enderecoDomain.getComplemento().isEmpty()){
+            enderecoDomain.setComplemento(usuarioRequest.getEndereco().getComplemento());
+        }
+
+        enderecoDomain.setNumero(usuarioRequest.getEndereco().getNumero());
+        enderecoDomain.setPais(new Locale("pt", "BR").getCountry());
+        usuarioRequest.setEndereco(enderecoDomain);
+
         if(Objects.nonNull(usuarioRequest.getEndereco())){
 
             if (StringUtils.isNotBlank(usuarioRequest.getEndereco().getLogradouro())){

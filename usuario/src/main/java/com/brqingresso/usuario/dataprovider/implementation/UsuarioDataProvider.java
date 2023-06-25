@@ -8,7 +8,6 @@ import com.brqingresso.usuario.dataprovider.mapper.response.UsuarioResponseMappe
 import com.brqingresso.usuario.dataprovider.repository.UsuarioRepository;
 import com.brqingresso.usuario.usecase.domain.UsuarioDomain;
 import com.brqingresso.usuario.usecase.dto.EnderecoViaCep;
-import com.brqingresso.usuario.usecase.exception.ViaCepExceptionBadRequest;
 import com.brqingresso.usuario.usecase.exception.ViaCepExceptionNotFound;
 import com.brqingresso.usuario.usecase.gateway.UsuarioGateway;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,7 +73,7 @@ public class UsuarioDataProvider implements UsuarioGateway {
         EnderecoViaCep endereco = consultaApi.consultaCep(cep);
 
         if (Objects.isNull(endereco.getCep())){
-            throw new ViaCepExceptionNotFound("O CEP informado não foi encotrado");
+            throw new ViaCepExceptionNotFound("O CEP informado não foi encontrado");
         }
         return endereco;
     }
