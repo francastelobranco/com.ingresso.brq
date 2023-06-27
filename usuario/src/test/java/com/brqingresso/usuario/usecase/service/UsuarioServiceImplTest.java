@@ -1,14 +1,13 @@
 package com.brqingresso.usuario.usecase.service;
 
+import com.brqingresso.usuario.usecase.domain.RecuperarSenhaDomain;
 import com.brqingresso.usuario.usecase.domain.SenhaDomain;
 import com.brqingresso.usuario.usecase.domain.UsuarioDomain;
-import com.brqingresso.usuario.usecase.exception.DataIncorretaException;
-import com.brqingresso.usuario.usecase.exception.SenhaIncorretaException;
-import com.brqingresso.usuario.usecase.exception.ViaCepExceptionBadRequest;
+import com.brqingresso.usuario.usecase.exception.*;
 import com.brqingresso.usuario.usecase.gateway.UsuarioGateway;
-import com.brqingresso.usuario.usecase.service.mock.MockEnderecoResponseTest;
-import com.brqingresso.usuario.usecase.service.mock.MockUsuarioRequestTest;
-import com.brqingresso.usuario.usecase.service.mock.MockUsuarioResponseTest;
+import com.brqingresso.usuario.mock.EnderecoDomainMock;
+import com.brqingresso.usuario.mock.UsuarioDomainMock;
+import com.brqingresso.usuario.mock.RecuperarSenhaMock;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -18,7 +17,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -40,9 +41,9 @@ class UsuarioServiceImplTest {
 
     @Test
     void testaCadastroDeUsuario() {
-        UsuarioDomain usuarioRequest = new MockUsuarioRequestTest().mockUsuarioDomainRequest();
-        UsuarioDomain usuarioResponse = new MockUsuarioResponseTest().mockUsuarioDomainResponse();
-        var enderecoViaCep = MockEnderecoResponseTest.mockEnderecoViaCep();
+        UsuarioDomain usuarioRequest = new UsuarioDomainMock().getUsuarioMock();
+        UsuarioDomain usuarioResponse = new UsuarioDomainMock().getUsuarioMock();
+        var enderecoViaCep = EnderecoDomainMock.getMockEnderecoViaCep();
 
         when(usuarioGateway.cadastrarUsuario(any())).thenReturn(usuarioResponse);
         when(usuarioGateway.consultaCep(any())).thenReturn(enderecoViaCep);
@@ -72,20 +73,20 @@ class UsuarioServiceImplTest {
 
     @Test
     void deveLancarExceptionAoPassarUmaDataFutura() {
-        UsuarioDomain usuarioRequest = new MockUsuarioRequestTest().mockUsuarioDomainRequest();
-        usuarioRequest.setDataNascimento(LocalDate.of(2070,11,01));
-        assertThrows(DataIncorretaException.class, () -> service.cadastrarUsuario(usuarioRequest));
+        UsuarioDomain usuario = new UsuarioDomainMock().getUsuarioMock();
+        usuario.setDataNascimento(LocalDate.of(2070,11,01));
+        assertThrows(DataIncorretaException.class, () -> service.cadastrarUsuario(usuario));
     }
     @Test
     void deveLancarExceptionAoPassarUmCepMaior() {
-        UsuarioDomain usuarioRequest = new MockUsuarioRequestTest().mockUsuarioDomainRequest();
-        usuarioRequest.getEndereco().setCep("230801801");
-        assertThrows(ViaCepExceptionBadRequest.class, () -> service.cadastrarUsuario(usuarioRequest));
+        UsuarioDomain usuario = new UsuarioDomainMock().getUsuarioMock();
+        usuario.getEndereco().setCep("230801801");
+        assertThrows(ViaCepExceptionBadRequest.class, () -> service.cadastrarUsuario(usuario));
     }
 
     @Test
     void testaListagemDeUsuarios() {
-        List<UsuarioDomain> listaUsuarios = new MockUsuarioResponseTest().mockListUsuarioDomainResponse();
+        List<UsuarioDomain> listaUsuarios = new UsuarioDomainMock().getListUsuarioMock();
         when(usuarioGateway.listarUsuarios()).thenReturn(listaUsuarios);
         var usuarios = service.listarUsuarios();
 
@@ -114,8 +115,8 @@ class UsuarioServiceImplTest {
 
     @Test
     void testaDetalhamentoDeUsuario() {
-        UsuarioDomain usuarioResponse = new MockUsuarioResponseTest().mockUsuarioDomainResponse();
-        when(usuarioGateway.detalharUsuario(any())).thenReturn(usuarioResponse);
+        UsuarioDomain usuarioDomain = new UsuarioDomainMock().getUsuarioMock();
+        when(usuarioGateway.detalharUsuario(any())).thenReturn(usuarioDomain);
         var usuarios = service.detalharUsuario("11fd54a0-afcb-411c-b1c2-9dae0ca57a67");
 
         assertAll(
@@ -142,9 +143,9 @@ class UsuarioServiceImplTest {
 
     @Test
     void testaAtualizacaoDeUsuario() {
-        UsuarioDomain usuarioRequest = new MockUsuarioRequestTest().mockUsuarioDomainRequest();
-        UsuarioDomain usuarioResponse = new MockUsuarioResponseTest().mockUsuarioDomainResponse();
-        var enderecoViaCep = MockEnderecoResponseTest.mockEnderecoViaCep();
+        UsuarioDomain usuarioRequest = new UsuarioDomainMock().getUsuarioMock();
+        UsuarioDomain usuarioResponse = new UsuarioDomainMock().getUsuarioMock();
+        var enderecoViaCep = EnderecoDomainMock.getMockEnderecoViaCep();
 
         when(usuarioGateway.consultaCep(any())).thenReturn(enderecoViaCep);
         when(usuarioGateway.detalharUsuario(any())).thenReturn(usuarioResponse);
@@ -187,14 +188,14 @@ class UsuarioServiceImplTest {
         senha.setSenhaAtual("1234567");
         senha.setNovaSenha("123");
 
-        UsuarioDomain usuarioResponse = new MockUsuarioResponseTest().mockUsuarioDomainResponse();
-        usuarioResponse.setSenha("1234567");
+        UsuarioDomain usuario = new UsuarioDomainMock().getUsuarioMock();
+        usuario.setSenha("1234567");
 
-        when(usuarioGateway.detalharUsuario(any())).thenReturn(usuarioResponse);
-        when(usuarioGateway.atualizarUsuario(any())).thenReturn(usuarioResponse);
+        when(usuarioGateway.detalharUsuario(any())).thenReturn(usuario);
+        when(usuarioGateway.atualizarUsuario(any())).thenReturn(usuario);
         service.alterarSenha(idUsuario, senha);
 
-        assertEquals("123", usuarioResponse.getSenha());
+        assertEquals("123", usuario.getSenha());
     }
 
     @Test
@@ -204,48 +205,126 @@ class UsuarioServiceImplTest {
         senha.setSenhaAtual("1234567");
         senha.setNovaSenha("123");
 
-        UsuarioDomain usuarioResponse = new MockUsuarioResponseTest().mockUsuarioDomainResponse();
-        usuarioResponse.setSenha("123456");
+        UsuarioDomain usuario = new UsuarioDomainMock().getUsuarioMock();
+        usuario.setSenha("123456");
 
-        when(usuarioGateway.detalharUsuario(any())).thenReturn(usuarioResponse);
+        when(usuarioGateway.detalharUsuario(any())).thenReturn(usuario);
 
         assertThrows(SenhaIncorretaException.class, () -> service.alterarSenha(idUsuario, senha));
     }
 
     @Test
     void testaGerarCodigoAlteracaoSenha() {
-        UsuarioDomain usuarioResponse = new MockUsuarioResponseTest().mockUsuarioDomainResponse();
-        usuarioResponse.setId("18c96aff-0a91-457b-b4f8-36e51f599612");
+        UsuarioDomain usuario = new UsuarioDomainMock().getUsuarioMock();
+        usuario.setId("18c96aff-0a91-457b-b4f8-36e51f599612");
 
-        when(service.detalharUsuario(any())).thenReturn(usuarioResponse);
-        when(usuarioGateway.atualizarUsuario(any())).thenReturn(usuarioResponse);
-        service.gerarCodigoAlteracaoSenha(usuarioResponse.getId());
+        when(service.detalharUsuario(any())).thenReturn(usuario);
+        when(usuarioGateway.atualizarUsuario(any())).thenReturn(usuario);
+        service.gerarCodigoAlteracaoSenha(usuario.getId());
 
-        assertFalse(usuarioResponse.getCodigoSeguranca().isEmpty());
+        assertFalse(usuario.getCodigoSeguranca().isEmpty());
     }
 
-//    @Test
-//    void testaRecuperarSenhaUsuario() {
-//
-//        OffsetDateTime dataHora = OffsetDateTime.of(2023, 12, 3, 2,2,2,2, ZoneOffset.UTC);
-//
-//
-//        UsuarioDomain usuarioResponse = new UsuarioResponseTest().mockUsuarioDomainResponse();
-//        usuarioResponse.setSenha("123");
-//        usuarioResponse.setCodigoSeguranca("18c96aff-0a91-457b-b4f8-36e51f5996123");
-//        usuarioResponse.setDataHoraCodigoSeguranca(dataHora);
-//
-//        RecuperarSenhaDomain recuperarSenha = new RecuperarSenhaTest().mockRecuperarSenha();
-//
-//
-//        when(usuarioGateway.detalharUsuario(any())).thenReturn(usuarioResponse);
-//        when(usuarioGateway.atualizarUsuario(any())).thenReturn(usuarioResponse);
-//        service.recuperarSenha(usuarioResponse.getId(), recuperarSenha);
-//        assertEquals("123", usuarioResponse.getDataHoraCodigoSeguranca());
-//        //assertEquals("123", usuarioResponse.getSenha());
-//    }
+    @Test
+    void testaRecuperarSenhaUsuario() {
+
+        OffsetDateTime dataHora = OffsetDateTime.of(2023, 12, 3, 2,2,2,2, ZoneOffset.UTC);
+
+        UUID codigo = UUID.randomUUID();
+
+        String id = "4fa8c98f-a8fb-4fe8-8b0b-512c07fb46e3";
+        UsuarioDomain usuario = new UsuarioDomainMock().getUsuarioMock();
+        usuario.setId("4fa8c98f-a8fb-4fe8-8b0b-512c07fb46e3");
+        usuario.setSenha("123");
+        usuario.setCodigoSeguranca(codigo.toString());
+        usuario.setDataHoraCodigoSeguranca(dataHora);
+
+        RecuperarSenhaDomain recuperarSenha = new RecuperarSenhaMock().getMockRecuperarSenha();
+        recuperarSenha.setCodigoSeguranca(codigo);
+
+        when(usuarioGateway.detalharUsuario(id)).thenReturn(usuario);
+        when(usuarioGateway.atualizarUsuario(any())).thenReturn(usuario);
+        var resposta = service.recuperarSenha(id, recuperarSenha);
+
+        assertEquals("1234", resposta.getSenha());
+    }
+
+    @Test
+    void deveLancarCodigoSegurancaIncorretoException() {
+        OffsetDateTime dataHora = OffsetDateTime.of(2023, 12, 3, 2,2,2,2, ZoneOffset.UTC);
+
+        UUID codigoUm = UUID.randomUUID();
+        UUID codigoDois = UUID.randomUUID();
+
+        String id = "4fa8c98f-a8fb-4fe8-8b0b-512c07fb46e3";
+        UsuarioDomain usuario = new UsuarioDomainMock().getUsuarioMock();
+        usuario.setId("4fa8c98f-a8fb-4fe8-8b0b-512c07fb46e3");
+        usuario.setSenha("123");
+        usuario.setCodigoSeguranca(codigoUm.toString());
+        usuario.setDataHoraCodigoSeguranca(dataHora);
+
+        RecuperarSenhaDomain recuperarSenha = new RecuperarSenhaMock().getMockRecuperarSenha();
+        recuperarSenha.setCodigoSeguranca(codigoDois);
+
+        when(usuarioGateway.detalharUsuario(id)).thenReturn(usuario);
+
+        CodigoSegurancaIncorretoException excecao = assertThrows(CodigoSegurancaIncorretoException.class,
+                () -> service.recuperarSenha(id, recuperarSenha));
+
+        assertEquals("O codigo de segurança informado está incorreto", excecao.getMessage());
+    }
+
+    @Test
+    void deveLancarSenhaIncorretaException() {
+        OffsetDateTime dataHora = OffsetDateTime.of(2023, 12, 3, 2,2,2,2, ZoneOffset.UTC);
+
+        UUID codigo = UUID.randomUUID();
+
+        String id = "4fa8c98f-a8fb-4fe8-8b0b-512c07fb46e3";
+        UsuarioDomain usuario = new UsuarioDomainMock().getUsuarioMock();
+        usuario.setId("4fa8c98f-a8fb-4fe8-8b0b-512c07fb46e3");
+        usuario.setSenha("1234");
+        usuario.setCodigoSeguranca(codigo.toString());
+        usuario.setDataHoraCodigoSeguranca(dataHora);
+
+        RecuperarSenhaDomain recuperarSenha = new RecuperarSenhaMock().getMockRecuperarSenha();
+        recuperarSenha.setCodigoSeguranca(codigo);
+
+        when(usuarioGateway.detalharUsuario(id)).thenReturn(usuario);
+
+        SenhaIncorretaException excecao = assertThrows(SenhaIncorretaException.class,
+                () -> service.recuperarSenha(id, recuperarSenha));
+
+        assertEquals("A senha informada é a mesma que está cadastrada. Informe uma senha diferente", excecao.getMessage());
+    }
+
+    @Test
+    void deveLancarTokenExpiradoException() {
+        OffsetDateTime tempoExpirado = OffsetDateTime.now().minus(5, ChronoUnit.MINUTES);
+
+        UUID codigo = UUID.randomUUID();
+
+        String id = "4fa8c98f-a8fb-4fe8-8b0b-512c07fb46e3";
+        UsuarioDomain usuario = new UsuarioDomainMock().getUsuarioMock();
+        usuario.setId("4fa8c98f-a8fb-4fe8-8b0b-512c07fb46e3");
+        usuario.setSenha("123");
+        usuario.setCodigoSeguranca(codigo.toString());
+        usuario.setDataHoraCodigoSeguranca(OffsetDateTime.now());
+        usuario.setDataHoraCodigoSeguranca(tempoExpirado);
 
 
+
+
+        RecuperarSenhaDomain recuperarSenha = new RecuperarSenhaMock().getMockRecuperarSenha();
+        recuperarSenha.setCodigoSeguranca(codigo);
+
+        when(usuarioGateway.detalharUsuario(id)).thenReturn(usuario);
+
+        TokenExpiradoException excecao = assertThrows(TokenExpiradoException.class,
+                () -> service.recuperarSenha(id, recuperarSenha));
+
+        assertEquals("Token de segurança expirado", excecao.getMessage());
+    }
 
 }
 

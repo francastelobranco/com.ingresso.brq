@@ -1,8 +1,6 @@
-package com.brqingresso.usuario.dataprovider.implementation.mock;
+package com.brqingresso.usuario.mock;
 
 import com.brqingresso.usuario.dataprovider.entity.UsuarioEntity;
-import com.brqingresso.usuario.usecase.domain.UsuarioDomain;
-import com.brqingresso.usuario.usecase.service.mock.MockEnderecoResponseTest;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
@@ -13,7 +11,7 @@ public class MockUsuarioResponseEntity {
     static OffsetDateTime dataCadastro = OffsetDateTime.of(2023, 12, 3, 2,2,2,2, ZoneOffset.UTC);
     static OffsetDateTime dataAtualizacao = OffsetDateTime.of(2023, 12, 3, 2,2,2,2, ZoneOffset.UTC);
 
-    public UsuarioEntity mockUsuarioEntity(){
+    public UsuarioEntity getMockUsuarioEntity(){
         return UsuarioEntity.builder()
                 .id("11fd54a0-afcb-411c-b1c2-9dae0ca57a67")
                 .cpf("16064743751")
@@ -26,10 +24,10 @@ public class MockUsuarioResponseEntity {
                 .dataAtualizacao(dataAtualizacao)
                 .sexo(2)
                 .senha("1234")
-                .endereco(MockEnderecoResponseEntity.mockEnderecoEntity())
+                .endereco(EnderecoEntityMock.getMockEnderecoEntity())
                 .build();
     }
-    public List<UsuarioEntity> mockListUsuarioEntity(){
+    public List<UsuarioEntity> getMockListUsuarioEntity(){
         return List.of(UsuarioEntity.builder()
                 .id("11fd54a0-afcb-411c-b1c2-9dae0ca57a67")
                 .cpf("16064743751")
@@ -41,7 +39,7 @@ public class MockUsuarioResponseEntity {
                 .dataCadastro(dataCadastro)
                 .dataAtualizacao(dataAtualizacao)
                 .sexo(2)
-                .endereco(MockEnderecoResponseEntity.mockEnderecoEntity())
+                .endereco(EnderecoEntityMock.getMockEnderecoEntity())
                 .build());
     }
 

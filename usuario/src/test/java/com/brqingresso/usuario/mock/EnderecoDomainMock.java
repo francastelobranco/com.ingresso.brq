@@ -1,12 +1,12 @@
-package com.brqingresso.usuario.usecase.service.mock;
+package com.brqingresso.usuario.mock;
 
 import com.brqingresso.usuario.usecase.domain.EnderecoDomain;
 import com.brqingresso.usuario.usecase.dto.EnderecoViaCep;
 
 
-public class MockEnderecoResponseTest {
+public class EnderecoDomainMock {
 
-    public static EnderecoDomain mockEnderecoDomain(){
+    public static EnderecoDomain getEnderecoMock(){
         return EnderecoDomain.builder()
                 .logradouro("Rua Vitor Alves")
                 .numero("01")
@@ -19,7 +19,7 @@ public class MockEnderecoResponseTest {
                 .build();
     }
 
-    public static EnderecoViaCep mockEnderecoViaCep(){
+    public static EnderecoViaCep getMockEnderecoViaCep(){
         return EnderecoViaCep.builder()
                 .cep("23080180")
                 .logradouro("Rua Vitor Alves")
@@ -30,14 +30,4 @@ public class MockEnderecoResponseTest {
                 .build();
     }
 
-    public static EnderecoViaCep mockEnderecoViaCepException(){
-        return EnderecoViaCep.builder()
-                .cep("230801801")
-                .logradouro("Rua Vitor Alves")
-                .complemento("casa")
-                .bairro("Campo Grande")
-                .localidade("Rio de Janeiro")
-                .uf("Rj")
-                .build();
-    }
 }

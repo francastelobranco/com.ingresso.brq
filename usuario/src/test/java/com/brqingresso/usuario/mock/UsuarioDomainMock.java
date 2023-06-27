@@ -1,4 +1,4 @@
-package com.brqingresso.usuario.usecase.service.mock;
+package com.brqingresso.usuario.mock;
 
 import com.brqingresso.usuario.usecase.domain.UsuarioDomain;
 
@@ -7,11 +7,11 @@ import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.List;
 
-public class MockUsuarioResponseTest {
+public class UsuarioDomainMock {
     static OffsetDateTime dataCadastro = OffsetDateTime.of(2023, 12, 3, 2,2,2,2, ZoneOffset.UTC);
     static OffsetDateTime dataAtualizacao = OffsetDateTime.of(2023, 12, 3, 2,2,2,2, ZoneOffset.UTC);
 
-    public UsuarioDomain mockUsuarioDomainResponse(){
+    public UsuarioDomain getUsuarioMock(){
         return UsuarioDomain.builder()
                 .id("11fd54a0-afcb-411c-b1c2-9dae0ca57a67")
                 .cpf("16064743751")
@@ -23,10 +23,10 @@ public class MockUsuarioResponseTest {
                 .dataCadastro(dataCadastro)
                 .dataAtualizacao(dataAtualizacao)
                 .sexo("F")
-                .endereco(MockEnderecoResponseTest.mockEnderecoDomain())
+                .endereco(EnderecoDomainMock.getEnderecoMock())
                 .build();
     }
-    public List<UsuarioDomain> mockListUsuarioDomainResponse(){
+    public List<UsuarioDomain> getListUsuarioMock(){
         return List.of(UsuarioDomain.builder()
                 .id("11fd54a0-afcb-411c-b1c2-9dae0ca57a67")
                 .cpf("16064743751")
@@ -38,7 +38,7 @@ public class MockUsuarioResponseTest {
                 .dataCadastro(dataCadastro)
                 .dataAtualizacao(dataAtualizacao)
                 .sexo("F")
-                .endereco(MockEnderecoResponseTest.mockEnderecoDomain())
+                .endereco(EnderecoDomainMock.getEnderecoMock())
                 .build());
     }
 

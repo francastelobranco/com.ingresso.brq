@@ -11,6 +11,9 @@ import com.brqingresso.usuario.usecase.dto.EnderecoViaCep;
 import com.brqingresso.usuario.usecase.exception.ViaCepExceptionNotFound;
 import com.brqingresso.usuario.usecase.gateway.UsuarioGateway;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -69,14 +72,28 @@ public class UsuarioDataProvider implements UsuarioGateway {
     }
 
     @Override
+    @Cacheable("viacep")
     public EnderecoViaCep consultaCep(String cep) {
         EnderecoViaCep endereco = consultaApi.consultaCep(cep);
 
         if (Objects.isNull(endereco.getCep())){
             throw new ViaCepExceptionNotFound("O CEP informado não foi encontrado");
         }
+
+        //simula latencia
+        try {
+            long tempo = 5000L;
+            Thread.sleep(tempo);
+        } catch (InterruptedException e) {
+            throw new IllegalStateException(e);
+        }
+
         return endereco;
     }
+
+    @CacheEvict(value = "viacep", allEntries = true)
+    @Scheduled(fixedRate = 30000)
+    public void evictAllCacheValues() {}
 }
 
 

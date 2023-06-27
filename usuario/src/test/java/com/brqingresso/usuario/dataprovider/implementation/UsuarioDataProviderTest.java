@@ -3,16 +3,13 @@ package com.brqingresso.usuario.dataprovider.implementation;
 import com.brqingresso.usuario.dataprovider.entity.UsuarioEntity;
 import com.brqingresso.usuario.dataprovider.exception.UsuarioNaoEncontradoException;
 import com.brqingresso.usuario.dataprovider.http.ConsultaApi;
-import com.brqingresso.usuario.dataprovider.implementation.mock.MockUsuarioResponseEntity;
+import com.brqingresso.usuario.mock.MockUsuarioResponseEntity;
 import com.brqingresso.usuario.dataprovider.repository.UsuarioRepository;
+import com.brqingresso.usuario.mock.UsuarioDomainMock;
 import com.brqingresso.usuario.usecase.domain.UsuarioDomain;
 import com.brqingresso.usuario.usecase.dto.EnderecoViaCep;
-import com.brqingresso.usuario.usecase.exception.ViaCepExceptionBadRequest;
 import com.brqingresso.usuario.usecase.exception.ViaCepExceptionNotFound;
-import com.brqingresso.usuario.usecase.gateway.UsuarioGateway;
-import com.brqingresso.usuario.usecase.service.UsuarioServiceImpl;
-import com.brqingresso.usuario.usecase.service.mock.MockEnderecoResponseTest;
-import com.brqingresso.usuario.usecase.service.mock.MockUsuarioRequestTest;
+import com.brqingresso.usuario.mock.EnderecoDomainMock;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -48,11 +45,11 @@ class UsuarioDataProviderTest {
 
     @Test
     void cadastrarUsuario() {
-        UsuarioDomain usuarioRequest = new MockUsuarioRequestTest().mockUsuarioDomainRequest();
-        UsuarioEntity usuarioEntity = new MockUsuarioResponseEntity().mockUsuarioEntity();
+        UsuarioDomain usuarioDomain = new UsuarioDomainMock().getUsuarioMock();
+        UsuarioEntity usuarioEntity = new MockUsuarioResponseEntity().getMockUsuarioEntity();
 
         when(repository.save(any())).thenReturn(usuarioEntity);
-        var usuario = usuarioGateway.cadastrarUsuario(usuarioRequest);
+        var usuario = usuarioGateway.cadastrarUsuario(usuarioDomain);
 
         assertAll(
                 () -> assertEquals("11fd54a0-afcb-411c-b1c2-9dae0ca57a67", usuario.getId()),
@@ -79,7 +76,7 @@ class UsuarioDataProviderTest {
 
     @Test
     void listarUsuarios() {
-        List<UsuarioEntity> usuarioEntity = new MockUsuarioResponseEntity().mockListUsuarioEntity();
+        List<UsuarioEntity> usuarioEntity = new MockUsuarioResponseEntity().getMockListUsuarioEntity();
 
         when(repository.findAll()).thenReturn(usuarioEntity);
         var usuarios = usuarioGateway.listarUsuarios();
@@ -95,7 +92,7 @@ class UsuarioDataProviderTest {
     @Test
     void detalharUsuario() {
         String id = "11fd54a0-afcb-411c-b1c2-9dae0ca57a67";
-        UsuarioEntity usuarioEntity = new MockUsuarioResponseEntity().mockUsuarioEntity();
+        UsuarioEntity usuarioEntity = new MockUsuarioResponseEntity().getMockUsuarioEntity();
 
 
         when(repository.findById(any())).thenReturn(Optional.ofNullable(usuarioEntity));
@@ -131,12 +128,12 @@ class UsuarioDataProviderTest {
 
     @Test
     void atualizarUsuario() {
-        UsuarioDomain usuarioRequest = new MockUsuarioRequestTest().mockUsuarioDomainRequest();
-        UsuarioEntity usuarioEntity = new MockUsuarioResponseEntity().mockUsuarioEntity();
+        UsuarioDomain usuarioDomain = new UsuarioDomainMock().getUsuarioMock();
+        UsuarioEntity usuarioEntity = new MockUsuarioResponseEntity().getMockUsuarioEntity();
 
 
         when(repository.save(any())).thenReturn(usuarioEntity);
-        var usuario = usuarioGateway.atualizarUsuario(usuarioRequest);
+        var usuario = usuarioGateway.atualizarUsuario(usuarioDomain);
 
         assertAll(
                 () -> assertEquals("11fd54a0-afcb-411c-b1c2-9dae0ca57a67", usuario.getId()),
@@ -165,7 +162,7 @@ class UsuarioDataProviderTest {
 
     @Test
     void deletarUsuario() {
-        UsuarioEntity usuarioEntity = new MockUsuarioResponseEntity().mockUsuarioEntity();
+        UsuarioEntity usuarioEntity = new MockUsuarioResponseEntity().getMockUsuarioEntity();
         String idUsuario = "11fd54a0-afcb-411c-b1c2-9dae0ca57a67";
 
         when(repository.findById(idUsuario)).thenReturn(Optional.of(usuarioEntity));
@@ -176,7 +173,7 @@ class UsuarioDataProviderTest {
 
     @Test
     void verificaCpfExiste() {
-        UsuarioEntity usuarioEntity = new MockUsuarioResponseEntity().mockUsuarioEntity();
+        UsuarioEntity usuarioEntity = new MockUsuarioResponseEntity().getMockUsuarioEntity();
         when(repository.existsByCpf(usuarioEntity.getCpf())).thenReturn(true);
         boolean cpfCadastrado = usuarioGateway.verificaCpfExiste(usuarioEntity.getCpf());
         assertTrue(cpfCadastrado);
@@ -185,7 +182,7 @@ class UsuarioDataProviderTest {
     @Test
     void consultaCep() {
         String cepNaoExistente = "12345678";
-        EnderecoViaCep enderecoViaCep = new MockEnderecoResponseTest().mockEnderecoViaCep();
+        EnderecoViaCep enderecoViaCep = new EnderecoDomainMock().getMockEnderecoViaCep();
         enderecoViaCep.setCep("12345678");
         when(consultaApi.consultaCep(cepNaoExistente)).thenReturn(enderecoViaCep);
         EnderecoViaCep cepIncorreto = usuarioGateway.consultaCep(cepNaoExistente);
@@ -196,7 +193,7 @@ class UsuarioDataProviderTest {
     @Test
     void deveLancarViaCepExceptionNotFound() {
         String cep = "12345678";
-        EnderecoViaCep enderecoViaCep = new MockEnderecoResponseTest().mockEnderecoViaCep();
+        EnderecoViaCep enderecoViaCep = new EnderecoDomainMock().getMockEnderecoViaCep();
         enderecoViaCep.setCep(null);
         when(consultaApi.consultaCep(cep)).thenReturn(enderecoViaCep);
 
