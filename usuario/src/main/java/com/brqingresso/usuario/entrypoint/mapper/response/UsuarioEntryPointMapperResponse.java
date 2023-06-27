@@ -1,11 +1,8 @@
 package com.brqingresso.usuario.entrypoint.mapper.response;
 
-import com.brqingresso.usuario.entrypoint.mapper.request.EnderecoEntryPointMapperRequest;
 import com.brqingresso.usuario.entrypoint.model.response.UsuarioModelResponse;
 import com.brqingresso.usuario.usecase.domain.UsuarioDomain;
 
-import java.time.OffsetDateTime;
-import java.time.temporal.ChronoField;
 import java.util.List;
 import java.util.stream.Collectors;
 

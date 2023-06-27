@@ -3,11 +3,7 @@ package com.brqingresso.usuario.dataprovider.mapper.response;
 import com.brqingresso.usuario.dataprovider.entity.UsuarioEntity;
 import com.brqingresso.usuario.dataprovider.enums.SexoEnum;
 import com.brqingresso.usuario.usecase.domain.UsuarioDomain;
-import lombok.Data;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 

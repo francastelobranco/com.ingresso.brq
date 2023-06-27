@@ -1,14 +1,10 @@
 package com.brqingresso.usuario.entrypoint.model.response;
 
-import com.brqingresso.usuario.usecase.domain.EnderecoDomain;
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 
 @Builder

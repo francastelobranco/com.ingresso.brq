@@ -2,11 +2,8 @@ package com.brqingresso.usuario.dataprovider.mapper.request;
 
 import com.brqingresso.usuario.dataprovider.entity.UsuarioEntity;
 import com.brqingresso.usuario.dataprovider.enums.SexoEnum;
-import com.brqingresso.usuario.entrypoint.mapper.request.EnderecoEntryPointMapperRequest;
 import com.brqingresso.usuario.usecase.domain.UsuarioDomain;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.temporal.ChronoField;
 

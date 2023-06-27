@@ -312,9 +312,6 @@ class UsuarioServiceImplTest {
         usuario.setDataHoraCodigoSeguranca(OffsetDateTime.now());
         usuario.setDataHoraCodigoSeguranca(tempoExpirado);
 
-
-
-
         RecuperarSenhaDomain recuperarSenha = new RecuperarSenhaMock().getMockRecuperarSenha();
         recuperarSenha.setCodigoSeguranca(codigo);
 

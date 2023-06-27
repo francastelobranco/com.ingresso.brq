@@ -2,7 +2,6 @@ package com.brqingresso.usuario.entrypoint.mapper.request;
 
 import com.brqingresso.usuario.entrypoint.model.request.UsuarioModelRequest;
 import com.brqingresso.usuario.usecase.domain.UsuarioDomain;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
